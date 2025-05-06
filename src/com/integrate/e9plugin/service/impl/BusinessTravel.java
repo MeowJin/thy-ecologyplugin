@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.integrate.e9java.service.impl.model.trip.Request.FlightEndorsementDetailModel;
 import com.integrate.e9java.service.impl.model.trip.Request.TripModel;
 import com.integrate.e9java.service.impl.utils.TripUtil;
+import com.integrate.e9plugin.service.impl.model.BusinessTravel.TravelModel;
+import com.integrate.e9plugin.service.impl.service.BusinessTravelService;
 import com.weaverboot.frame.ioc.anno.classAnno.WeaIocReplaceComponent;
 import com.weaverboot.tools.logTools.LogTools;
 import weaver.conn.RecordSet;
@@ -11,6 +13,9 @@ import weaver.general.BaseBean;
 import weaver.interfaces.workflow.action.Action;
 import weaver.soa.workflow.request.RequestInfo;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,10 +27,20 @@ public class BusinessTravel extends BaseBean implements Action {
     public String execute(RequestInfo request) {
         try{
             String requestId = request.getRequestid();
-            String mainTableName = request.getRequestManager().getBillTableName(); //主表表名
+//            String mainTableName = request.getRequestManager().getBillTableName(); //主表表名
+
+            RecordSet rs1 = new RecordSet();
+
+            String sql= "SELECT  bill.id,bill.tablename FROM    workflow_requestbase reqbase   LEFT JOIN workflow_base base ON reqbase.workflowid = base.id  LEFT JOIN workflow_bill bill ON base.formid = bill.id WHERE   requestid = "+ requestId;
+
+            rs1.execute(sql);
+            rs1.next();
+
+            //主表表名
+           String mainTableName= rs1.getString("tablename");
+           String billId= rs1.getString("id");
 
             RecordSet rs = new RecordSet();
-
             //获取主表数据
             rs.execute("select * from " + mainTableName + " where requestid =  " + requestId);
             rs.next();
@@ -34,93 +49,102 @@ public class BusinessTravel extends BaseBean implements Action {
             String mainId = rs.getString("id");
             //申请人
             String sqr = rs.getString("sqr");
+            //出差地点
+            String ccdd = rs.getString("ccdd");
+            //开始日期
+            String ksrq = rs.getString("ksrq");
+            //开始时间
+            String kssj = rs.getString("kssj");
+            //结束日期
+            String jsrq = rs.getString("jsrq");
+            //结束时间
+            String jssj = rs.getString("jssj");
+            //出差事由
+            String 	ccsy = rs.getString("ccsy");
+            //协助人1
+            String 	xzr1 = rs.getString("xzr1");
+            //协助人2
+            String 	xzr2 = rs.getString("xzr2");
+            //协助人3
+            String 	xzr3 = rs.getString("xzr3");
 
-            //流程编码
-            //String lcbh = rs.getString("lcbh");
+            RecordSet rs3 = new RecordSet();
+            String sql3="SELECT  t1.selectname " +
+                    "FROM    workflow_SelectItem t1 " +
+                    "        LEFT JOIN workflow_billfield t2 ON t1.fieldid = t2.id " +
+                    "WHERE   t2.billid = "+billId+
+                    "        AND t2.fieldname = 'ccsy' " +
+                    "        AND selectvalue = "+ccsy;
 
-            //获取用户信息
-            rs.execute("SELECT loginid FROM HrmResource WHERE id= " + sqr);
-            rs.next();
-            //员工工号
-            String employeeNo = rs.getString("loginid");
+            rs3.execute(sql3);
+            rs3.next();
 
-            LogTools.info("主数据========" +mainId + "," + sqr + "," + employeeNo);
+            String 	ccsyName = rs3.getString("selectname");
 
-            //出差行程表名
-//            String dt2TableName = mainTableName + "_dt2";
-//
-//            // 根据mainId查询明细表数据
-//            rs.execute("select * from " + dt2TableName + " where mainid =  " + mainId);
-//
-//            List<TripModel> tripModels = new ArrayList<>();
-//
-//            // 遍历明细表的数据
-//            while (rs.next()) {
-//                //开始日期
-//                String YCFRQ = rs.getString("YCFRQ");
-//                //结束日期
-//                String YGLRQ = rs.getString("YGLRQ");
-//                //交通工具 0:飞机 1：火车 2：出租车 3：汽车 4：自驾
-//                String jtgj1 = rs.getString("jtgj1");
-//
-//                //开始时间段
-//                //0: 上午(00:00-12:00)
-//                //1:下午(12:00-18:00)
-//                //2:夜晚(18:00-23:59)
-//                //3:全天(00:00-23:59)
-//                String kssjd = rs.getString("kssjd");
-//                //结束时间段
-//                String jssjd = rs.getString("jssjd");
-//                //行程类型
-//                String xclx = rs.getString("xclx");
-//                //是否抛转成功
-//                Integer xcpzsfcg=rs.getInt("xcpzsfcg");
-//
-//                //出差天数
-//                String sc = rs.getString("sc");
-//
-//                LogTools.info("明细行数据========" + YCFRQ + "," + YGLRQ + "," + jtgj1 + "," + kssjd + "," + jssjd + "," + xclx + "," + sc);
-//
-//                //构建携程提前审批对象----开始----
-//
-//                if(xcpzsfcg!=1) {
-//                    TripModel tripModel = new TripModel();
-//                    tripModel.ApprovalNumber = lcbh + "_" + YCFRQ; //审批单号
-//                    tripModel.Status = 1;
-//                    tripModel.EmployeeID = employeeNo;
-//
-//                    FlightEndorsementDetailModel flightModel = new FlightEndorsementDetailModel();
-//
-//                    flightModel.ProductType = "1";
-//                    flightModel.FlightWay = "2";
-//                    flightModel.DepartDateBegin = YCFRQ;
-//
-//                    tripModel.FlightEndorsementDetails = flightModel;
-//
-//                    tripModels.add(tripModel);
-//                }
-//                //构建携程提前审批对象----结束----
-//            }
-//
-//            LogTools.info(JSONObject.toJSONString(tripModels));
-//
-//            TripUtil tripUtil=new TripUtil();
-//
-//            for (TripModel model : tripModels) {
-//               String appNum= tripUtil.SendApproval(model);
-//                LogTools.info("发送成功："+appNum);
-//               //如成功则回写成功标记
-//                if(appNum!=null){
-//                    rs.execute("update " + dt2TableName + " set xcpzsfcg=1 where mainid =  " + mainId);
-//                    rs.next();
-//                }
-//            }
+            List<TravelModel> travelModels = new ArrayList<TravelModel>();
+
+//            rs.execute("SELECT loginid FROM HrmResource WHERE id= " + sqr);
+//            rs.next();
+//            String employeeNo = rs.getString("loginid");
+
+            String NewBegin=ksrq+' '+kssj;
+            String NewEnd=jsrq+ ' '+ jssj;
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            LocalDateTime startDateTime = LocalDateTime.parse(NewBegin, formatter);
+            LocalDateTime endDateTime = LocalDateTime.parse(NewEnd, formatter);
+            Duration duration = Duration.between(startDateTime, endDateTime);
+            long durationInSeconds = duration.getSeconds();
+
+            TravelModel travel =new TravelModel();
+            travel.UserId=sqr;
+            travel.NewBegin=NewBegin;
+            travel.NewEnd=NewEnd;
+            travel.NewDuration=durationInSeconds;
+            travel.Reason=ccsyName;
+            travel.Location=ccdd;
+            travelModels.add(travel);
+
+
+            if(xzr1!=null&&!xzr1.isEmpty()){
+                TravelModel travel1 =new TravelModel();
+                travel1.UserId=sqr;
+                travel1.NewBegin=NewBegin;
+                travel1.NewEnd=NewEnd;
+                travel1.NewDuration=durationInSeconds;
+                travel1.Reason=ccsyName;
+                travel1.Location=ccdd;
+                travelModels.add(travel1);
+            }
+
+            if(xzr2!=null&&!xzr2.isEmpty()){
+                TravelModel travel2 =new TravelModel();
+                travel2.UserId=sqr;
+                travel2.NewBegin=NewBegin;
+                travel2.NewEnd=NewEnd;
+                travel2.NewDuration=durationInSeconds;
+                travel2.Reason=ccsyName;
+                travel2.Location=ccdd;
+                travelModels.add(travel2);
+            }
+
+            if(xzr3!=null&&!xzr3.isEmpty()){
+                TravelModel travel3 =new TravelModel();
+                travel3.UserId=sqr;
+                travel3.NewBegin=NewBegin;
+                travel3.NewEnd=NewEnd;
+                travel3.NewDuration=durationInSeconds;
+                travel3.Reason=ccsyName;
+                travel3.Location=ccdd;
+                travelModels.add(travel3);
+            }
+            BusinessTravelService service=new BusinessTravelService();
+            service.SynchronizeTravel(travelModels);
 
             return Action.SUCCESS;
 
         } catch (Exception e){
-            request.getRequestManager().setMessagecontent("抛转携程商旅订单信息异常终止流程提交："+e.getMessage());
-            LogTools.error("抛转携程商旅订单信息异常：" + e.getMessage());
+            request.getRequestManager().setMessagecontent("抛转出差申请异常终止流程提交："+e.getMessage());
+            LogTools.error("抛转出差申请异常终止流程提交：" + e.getMessage());
             return Action.FAILURE_AND_CONTINUE;
         }
     }
