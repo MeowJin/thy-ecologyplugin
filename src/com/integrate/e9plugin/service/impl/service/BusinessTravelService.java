@@ -9,6 +9,7 @@ import com.integrate.e9plugin.service.impl.utils.OkHttpUtils;
 import com.weaverboot.tools.logTools.LogTools;
 
 import java.util.List;
+import java.util.Objects;
 
 public class BusinessTravelService {
     private String url = "http://10.1.10.111:3000/api/Wework/ApprovalEvection";
@@ -27,7 +28,7 @@ public class BusinessTravelService {
 
         LogTools.info("获取到的响应：" + response);
 
-        if(response!="success"){
+        if(!Objects.equals(response, "success")){
             LogTools.error("发送出差申请单同步失败：" + response);
             throw new RuntimeException(response);
         }

@@ -67,7 +67,7 @@ public class BusinessTravel extends BaseBean implements Action {
             String 	xzr2 = rs.getString("xzr2");
             //协助人3
             String 	xzr3 = rs.getString("xzr3");
-
+            LogTools.info("申请人：" + sqr+",协助人1:"+xzr1+",协助人2:"+xzr2+",协助人3:"+xzr3);
             RecordSet rs3 = new RecordSet();
             String sql3="SELECT  t1.selectname " +
                     "FROM    workflow_SelectItem t1 " +
@@ -104,10 +104,10 @@ public class BusinessTravel extends BaseBean implements Action {
             travel.Location=ccdd;
             travelModels.add(travel);
 
-
+            LogTools.info("出差申请：" + travelModels);
             if(xzr1!=null&&!xzr1.isEmpty()){
                 TravelModel travel1 =new TravelModel();
-                travel1.UserId=sqr;
+                travel1.UserId=xzr1;
                 travel1.NewBegin=NewBegin;
                 travel1.NewEnd=NewEnd;
                 travel1.NewDuration=durationInSeconds;
@@ -115,10 +115,10 @@ public class BusinessTravel extends BaseBean implements Action {
                 travel1.Location=ccdd;
                 travelModels.add(travel1);
             }
-
+            LogTools.info("出差申请1：" + travelModels);
             if(xzr2!=null&&!xzr2.isEmpty()){
                 TravelModel travel2 =new TravelModel();
-                travel2.UserId=sqr;
+                travel2.UserId=xzr2;
                 travel2.NewBegin=NewBegin;
                 travel2.NewEnd=NewEnd;
                 travel2.NewDuration=durationInSeconds;
@@ -126,10 +126,10 @@ public class BusinessTravel extends BaseBean implements Action {
                 travel2.Location=ccdd;
                 travelModels.add(travel2);
             }
-
+            LogTools.info("出差申请2：" + travelModels);
             if(xzr3!=null&&!xzr3.isEmpty()){
                 TravelModel travel3 =new TravelModel();
-                travel3.UserId=sqr;
+                travel3.UserId=xzr3;
                 travel3.NewBegin=NewBegin;
                 travel3.NewEnd=NewEnd;
                 travel3.NewDuration=durationInSeconds;
@@ -137,6 +137,7 @@ public class BusinessTravel extends BaseBean implements Action {
                 travel3.Location=ccdd;
                 travelModels.add(travel3);
             }
+            LogTools.info("出差申请3：" + travelModels);
             BusinessTravelService service=new BusinessTravelService();
             service.SynchronizeTravel(travelModels);
 
