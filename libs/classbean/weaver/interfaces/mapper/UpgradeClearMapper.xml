@@ -3,7 +3,7 @@
 <mapper namespace="weaver.interfaces.mapper.UpgradeClearMapper">
 	<update id="replaceActionName">
 		update workflowactionset set actionname = replace(actionname,'action.','')
-		<if test="_databaseId=='oracle' || _databaseId=='mysql'">
+		<if test="_databaseId=='oracle' || _databaseId=='mysql'|| _databaseId=='postgresql'">
 		where instr(actionname,'action.')>0
 		</if>
 		<if test="_databaseId=='sqlserver'">
@@ -12,7 +12,7 @@
 	</update>
 	<update id="replaceInterfaceId">
 		update workflowactionset set interfaceid = replace(interfaceid,'action.','')
-		<if test="_databaseId=='oracle' || _databaseId=='mysql'">
+		<if test="_databaseId=='oracle' || _databaseId=='mysql'|| _databaseId=='postgresql'">
 		where instr(interfaceid,'action.')>0
 		</if>
 		<if test="_databaseId=='sqlserver'">
@@ -23,7 +23,7 @@
 		<![CDATA[
 		select a.id, a.formid from formactionset a, formactionsqlset b where a.id = b.actionid and a.formid < 0
 		]]>
-		<if test="_databaseId=='oracle' || _databaseId=='mysql'">
+		<if test="_databaseId=='oracle' || _databaseId=='mysql'|| _databaseId=='postgresql'">
 		and instr(b.actiontable, -a.formid) = 0
 		</if>
 		<if test="_databaseId=='sqlserver'">
@@ -57,6 +57,14 @@
          )
 	</select>
 	<select id="countNotRegiste" resultType="int" databaseId="mysql">
+         select t.* from wsformactionset t
+         where not exists (
+            select 1 from wsformactionset t1 join wsregiste t2
+            on t1.wsurl = t2.id where t.id=t1.id
+         )
+	</select>
+
+	<select id="countNotRegiste" resultType="int" databaseId="postgresql">
          select t.* from wsformactionset t
          where not exists (
             select 1 from wsformactionset t1 join wsregiste t2

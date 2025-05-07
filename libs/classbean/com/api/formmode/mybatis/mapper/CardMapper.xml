@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.com.api.formmode.mybatis.mapper.CardMapper">
+<mapper namespace="com.api.formmode.mybatis.mapper.CardMapper">
 	<update id="editCard">
 		update ${tableName}
 		   <set>
@@ -76,7 +76,7 @@
 		 	   #{item.value}
 		</foreach>
 	</insert>
-	<select id="getCard" resultType="com.com.api.formmode.mybatis.bean.SplitPageResult">
+	<select id="getCard" resultType="com.api.formmode.mybatis.bean.SplitPageResult">
 		select 
 		 <choose>
 		 	<when test="fields!=null">
@@ -102,14 +102,14 @@
 			</foreach>
 		</if>
 	</select>
-	<select id="getIdByUUID" resultType="com.com.api.formmode.mybatis.bean.SplitPageResult">
+	<select id="getIdByUUID" resultType="com.api.formmode.mybatis.bean.SplitPageResult">
 		select ${primaryKey} primaryKey from ${tableName} where uuid = #{uuid}
 	</select>
 
-	<select id="getHtmlLabelIndexId" resultType="com.com.api.formmode.mybatis.bean.SplitPageResult">
+	<select id="getHtmlLabelIndexId" resultType="com.api.formmode.mybatis.bean.SplitPageResult">
 		select indexid id from htmllabelinfo where labelname = #{text} and languageid = #{languageid}
 	</select>
-	<select id="getNextHtmlLabelIndexId" resultType="com.com.api.formmode.mybatis.bean.SplitPageResult">
+	<select id="getNextHtmlLabelIndexId" resultType="com.api.formmode.mybatis.bean.SplitPageResult">
 		select min(id) id from htmllabelindex
 	</select>
 	<delete id="deleteHtmlLabelIndex">

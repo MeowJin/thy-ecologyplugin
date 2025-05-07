@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.com.api.formmode.mybatis.mapper.CustomSearchMapper">
-	<select id="getButtons" resultType="com.com.api.formmode.mybatis.bean.CustomSearchBatchSetBean">
+<mapper namespace="com.api.formmode.mybatis.mapper.CustomSearchMapper">
+	<select id="getButtons" resultType="com.api.formmode.mybatis.bean.CustomSearchBatchSetBean">
 		select COALESCE(s.id, 0) as batchSetId,
 			   COALESCE(s.listBatchName, e.expendName) as listBatchName,
 			   COALESCE(s.isUse, e.defaultenable) as isUse,
@@ -30,7 +30,7 @@
 		   and e.isbatch in ('1','2')
 		 order by COALESCE(s.showOrder,e.showOrder)
 	</select>
-	<select id="getColumns" resultType="com.com.api.formmode.mybatis.bean.FieldBean">
+	<select id="getColumns" resultType="com.api.formmode.mybatis.bean.FieldBean">
 		 select a.id as dspId,a.customId,a.FieldId,a.isQuery, a.isShow,a.showOrder,
 	       		a.queryOrder,a.isTitle,a.colWidth,a.isOrder,a.orderType,
 		   		a.orderNum,a.isStat,a.isKey,a.isOrderField,a.priOrder,
@@ -53,10 +53,10 @@
 		 	   #{value}
 		</foreach>
 	</delete>
-	<select id="getCustomButtons" resultType="com.com.api.formmode.mybatis.bean.CustomSearchButtonBean">
+	<select id="getCustomButtons" resultType="com.api.formmode.mybatis.bean.CustomSearchButtonBean">
 		select * from mode_customsearchButton where objid = #{customId} and isShow = '1' order by SHOWORDER
 	</select>
-	<select id="getBatchEditDetail" resultType="com.com.api.formmode.mybatis.bean.SplitPageResult">
+	<select id="getBatchEditDetail" resultType="com.api.formmode.mybatis.bean.SplitPageResult">
 		select a.*, b.fieldname from mode_batchmodifydetail a, workflow_billfield b  where a.FEILDID = b.id and  a.mainid = #{id}
 	</select>
 </mapper>

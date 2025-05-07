@@ -28,6 +28,17 @@
 		from HrmSubcompany a LEFT JOIN AlbumSubcompany b ON a.id=b.subcompanyId
 		order by a.supsubcomid,a.id
 	</select>
+
+	<select id="selectHrmAlbumSubcompanyVO" resultType="weaver.conn.mybatis.bean.HrmAlbumSubcompanyVO" databaseId="postgresql">
+		select  a.*,b.*,
+		round(b.albumsize/(1000+0.0),2) as totalsize,
+		round(b.albumSizeUsed/(1000+0.0),2) as usesize,
+		round((b.albumSize-b.albumSizeUsed)/(1000+0.0),2) as remainsize,
+		(case b.albumSize when 0 then 0 else round((b.albumSizeUsed/(b.albumSize+0.0)*100),2) end ) AS rate
+		from HrmSubcompany a LEFT JOIN AlbumSubcompany b ON a.id=b.subcompanyId
+		order by a.supsubcomid,a.id
+	</select>
+
 	<select id="selectHrmAlbumSubcompanyVO" resultType="weaver.conn.mybatis.bean.HrmAlbumSubcompanyVO" databaseId="sqlserver">
 		select a.*,b.*,(convert(decimal(18,2),b.albumsize/(1000+0.0))) as totalsize,
 		(convert(decimal(18,2),(b.albumSizeUsed/(1000+0.0)))) as usesize,

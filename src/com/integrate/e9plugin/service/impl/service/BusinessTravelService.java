@@ -2,8 +2,6 @@ package com.integrate.e9plugin.service.impl.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.integrate.e9java.service.impl.model.ZTrip.Request.TravelPlanModel;
-import com.integrate.e9java.service.impl.model.ZTrip.Response.ZTripResponse;
 import com.integrate.e9plugin.service.impl.model.BusinessTravel.TravelModel;
 import com.integrate.e9plugin.service.impl.utils.OkHttpUtils;
 import com.weaverboot.tools.logTools.LogTools;
@@ -12,7 +10,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class BusinessTravelService {
-    private String url = "http://10.1.10.111:3000/api/Wework/ApprovalEvection";
+    private String url = "http://127.0.0.1:3000/api/Wework/ApprovalEvection";
 
     /**
      * 推送出差申请

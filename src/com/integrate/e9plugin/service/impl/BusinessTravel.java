@@ -1,9 +1,5 @@
 package com.integrate.e9plugin.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
-import com.integrate.e9java.service.impl.model.trip.Request.FlightEndorsementDetailModel;
-import com.integrate.e9java.service.impl.model.trip.Request.TripModel;
-import com.integrate.e9java.service.impl.utils.TripUtil;
 import com.integrate.e9plugin.service.impl.model.BusinessTravel.TravelModel;
 import com.integrate.e9plugin.service.impl.service.BusinessTravelService;
 import com.weaverboot.frame.ioc.anno.classAnno.WeaIocReplaceComponent;
@@ -60,7 +56,7 @@ public class BusinessTravel extends BaseBean implements Action {
             //结束时间
             String jssj = rs.getString("jssj");
             //出差事由
-            String 	ccsy = rs.getString("ccsy");
+            String ccsy = rs.getString("ccsy2");
             //协助人1
             String 	xzr1 = rs.getString("xzr1");
             //协助人2
@@ -73,7 +69,7 @@ public class BusinessTravel extends BaseBean implements Action {
                     "FROM    workflow_SelectItem t1 " +
                     "        LEFT JOIN workflow_billfield t2 ON t1.fieldid = t2.id " +
                     "WHERE   t2.billid = "+billId+
-                    "        AND t2.fieldname = 'ccsy' " +
+                    "        AND t2.fieldname = 'ccsy2' " +
                     "        AND selectvalue = "+ccsy;
 
             rs3.execute(sql3);

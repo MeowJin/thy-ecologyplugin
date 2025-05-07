@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.com.api.formmode.mybatis.mapper.FormMapper">
-	<resultMap id="selectResultMap" type="com.com.api.formmode.mybatis.bean.SelectItemBean">
+<mapper namespace="com.api.formmode.mybatis.mapper.FormMapper">
+	<resultMap id="selectResultMap" type="com.api.formmode.mybatis.bean.SelectItemBean">
 		<id property="key" column="selectValue" />
 		<result property="title" column="selectName" />
 		<result property="value" column="selectValue" />
@@ -13,14 +13,14 @@
 		order by selectValue asc
 	</select>
 
-	<select id="getDetailTables" resultType="com.com.api.formmode.mybatis.bean.DetailTableBean">
+	<select id="getDetailTables" resultType="com.api.formmode.mybatis.bean.DetailTableBean">
 		select id, billId,
 		tableName, title, orderId
 		from workflow_billdetailtable
 		where billId = #{billId}
 		order by orderId asc
 	</select>
-	<select id="getFieldSelects" resultType="com.com.api.formmode.mybatis.bean.FieldBean">
+	<select id="getFieldSelects" resultType="com.api.formmode.mybatis.bean.FieldBean">
 		select a.id fieldId, a.fieldDbType, a.fieldName, a.fieldLabel,
 		a.detailTable
 		from workflow_billfield a
@@ -75,6 +75,19 @@
 			</foreach>
 		</foreach>
 	</insert>
+
+	<insert id="addData" databaseId="postgresql">
+		insert into ${tableName}
+		<foreach collection="columns" item="col" index="ci" open="(" separator="," close=")">
+			${col}
+		</foreach>
+		values
+		<foreach collection="datas" item="row" index="ri" open="" separator="," close="">
+			<foreach collection="row" item="data" index="di" open="(" separator="," close=")">
+				#{data}
+			</foreach>
+		</foreach>
+	</insert>
 	<insert id="addData" databaseId="oracle">
 		insert into ${tableName}
 		<foreach collection="columns" item="col" index="ci" open="(" separator="," close=")">
@@ -86,14 +99,14 @@
 			</foreach>
 		</foreach>
 	</insert>
-	<select id="getHrmResourceFields"  resultType="com.com.api.formmode.mybatis.bean.FieldBean">
+	<select id="getHrmResourceFields"  resultType="com.api.formmode.mybatis.bean.FieldBean">
 		select a.id fieldId, a.fieldLabel 
 		  from workflow_billfield a 
 		 where a.fieldhtmltype = '3' 
 		   and a.type in ('1','17') 
 		   and a.billid = #{formId}
 	</select>
-	<select id="getModeCount" resultType="com.com.api.formmode.mybatis.bean.CountBean">
+	<select id="getModeCount" resultType="com.api.formmode.mybatis.bean.CountBean">
 		select count(id) count from (
 			select id from modeinfo where formid = #{formid}
 			union all select id from mode_customsearch where formid = #{formid}
